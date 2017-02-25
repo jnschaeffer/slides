@@ -48,7 +48,7 @@ From Wikipedia: An embedded system is a computer system with a dedicated functio
 
 - Run code on an embedded device
 
-This is a small but important point: most embedded software runs on bare metal, directly manipulating registers and memory. Go programs run on top of an operating system and rely on the capabilities of an OS to function.
+This is a small but important point: embedded software runs on bare metal, directly manipulating registers and memory. Go programs run on top of an operating system and rely on the capabilities of an OS to function.
 
 * Go and the Raspberry Pi
 
@@ -78,8 +78,48 @@ Note: These instructions are Linux-specific. Raspbian ([[http://raspbian.org]]) 
 - Bootstrapping compiler means Go can build itself for any available target
 - Use `GOOS` and `GOARCH` environment variables to control build target
 - For ARM devices, set `GOARM` environment variable for appropriate ARM version
-- Raspberry Pi values: `GOARCH=arm`, `GOARM=7`
+- Raspberry Pi 3 values: `GOARCH=arm`, `GOARM=7`
 
   $ GOOS=linux GOARCH=arm GOARM=7 go build github.com/my/project/cmd/foo
 
+- Deploy using whatever method you prefer (`scp`, FTP, network filesystem, etc.)
 
+* Things to keep in mind
+
+- Binaries built with `cgo` are not statically linked
+- Go programs with C dependencies will probably break
+- To disable `cgo`, set the environment variable `CGO_ENABLED` to `0`
+
+  $ CGO_ENABLED=0 GOOS=linux GOARCH=arm GOARM=7 go build ...
+
+* Working with GPIO
+
+* Overview of GPIO
+
+- GPIO (general-purpose input/output) is a class of pins on an integrated circuit that have no predefined function
+- Fully programmable, great for interacting with external devices and sensors
+- Allows us to write programs at the application layer that work with physical hardware
+
+* Manipulating GPIO using Go
+
+* Example: Toggling LEDs
+
+* Things to keep in mind
+
+* Communicating with other devices
+
+* SPI overview
+
+* Communicating over SPI using Go
+
+* Example: MSP430 ADC readings
+
+* Things to keep in mind
+
+* Bringing it all together
+
+* What we've covered
+
+* Things to remember
+
+* Project ideas
