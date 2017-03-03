@@ -117,21 +117,48 @@ Note: Raspberry Pi 3 has ARMv8 processor, but 32-bit OSes will report it as ARMv
 - Application-level GPIO can't capture interrupts (Linux doesn't support it)
 - GPIO pins are not designed to supply power! Doing so can fry your device
 - Generic GPIO packages might not map pins the way you expect - check the source
+- User running a Go binary with GPIO needs to be root or part of the `gpio` group
 
 * Communicating with other devices
 
 * SPI overview
 
+- From Wikipedia: The Serial Peripheral Interface bus (SPI) is a synchronous serial communication interface specification used for short distance communication, primarily in embedded systems.
+- Logic signals: MOSI (Master Out Slave In), MISO (Master In Slave Out), SCLK (Serial Clock), SS (Slave Select)/CS (Chip Select)
+
+.image ./img/spi-single-slave.png
+.caption An example of an SPI bus with a single slave. [[https://commons.wikimedia.org/wiki/File:SPI_single_slave.svg][(source)]]
+
+Source: [[https://en.wikipedia.org/wiki/Serial_Peripheral_Interface_Bus]]
+
 * Communicating over SPI using Go
+
+- Work in progress with the stdlib to support SPI: `golang.org/x/exp/io/spi`
+- Go SPI package requires the `spidev` kernel module, available with Raspbian
 
 * Example: MSP430 ADC readings
 
 * Things to keep in mind
 
+- Go SPI support is Linux-only
+- `spidev` kernel module only supports operating as master, not slave
+- Raspberry Pi supports a max of 2 SS/CS pins (`/dev/spidev0.0` and `/dev/spidev0.1`)
+- User running a Go binary with SPI needs to be root or part of the `spi` group
+- SPI modes can be tricky to get right - read your device datasheet(s)
+
 * Bringing it all together
 
 * What we've covered
 
-* Things to remember
+- Working with embedded systems in pure Go is possible and straightforward
+- Writing embedded code in Go is not (use C/ASM)
+- Cross-compilation and deployment to a board are easy, no third-party tools needed
+- Linux kernel support for SPI makes communication with external devices much simpler
 
 * Project ideas
+
+- HTTP home weather server
+- Automated pet food bowl
+- Dedicated display for email notifications
+
+Others?
