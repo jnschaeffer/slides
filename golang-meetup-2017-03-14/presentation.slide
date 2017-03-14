@@ -127,7 +127,7 @@ Note: Raspberry Pi 3 has ARMv8 processor, but 32-bit OSes will report it as ARMv
 - Logic signals: MOSI (Master Out Slave In), MISO (Master In Slave Out), SCLK (Serial Clock), SS (Slave Select)/CS (Chip Select)
 
 .image ./img/spi-single-slave.png
-.caption An example of an SPI bus with a single slave. [[https://commons.wikimedia.org/wiki/File:SPI_single_slave.svg][(source)]]
+.caption An example of an SPI bus with a single slave.
 
 Source: [[https://en.wikipedia.org/wiki/Serial_Peripheral_Interface_Bus]]
 
@@ -135,8 +135,36 @@ Source: [[https://en.wikipedia.org/wiki/Serial_Peripheral_Interface_Bus]]
 
 - Work in progress with the stdlib to support SPI: `golang.org/x/exp/io/spi`
 - Go SPI package requires the `spidev` kernel module, available with Raspbian
+- Connect MOSI/MISO/SCLK pins and correct SS/CS pins (marked as CE0/CE1 below)
 
-* Example: MSP430 ADC readings
+.image ./img/raspberry-pi-pinout.png
+.caption Raspberry Pi 3 pinout diagram. [[https://pinout.xyz/][(source)]]
+
+* Example: Reading temperature values over SPI
+
+  // NewReader creates a new SPI reader for the given path.
+  func NewReader(path string) (*Reader, error) {
+  	dev, errOpen := spi.Open(&spi.Devfs{
+  		Dev:      "/dev/spidev0.1",
+  		Mode:     spi.Mode3,
+  		MaxSpeed: 12000,
+  	})
+  	// ...
+
+  	return reader, nil
+    }
+
+  // DegsC gets the current temperature in Celsius over SPI (MSB first).
+  func (s *SPISource) DegsC() (float64, error) {
+  	rx := make([]byte, 2)
+  	_, errRead := s.reader.Read(rx) // s.reader is a *Reader
+  	// ...
+
+  	tempX10 := (int(rx[0]) << 8) + int(rx[1])
+  	temp := float64(tempX10) / 10 
+
+  	return temp, nil
+  }
 
 * Things to keep in mind
 
@@ -160,5 +188,6 @@ Source: [[https://en.wikipedia.org/wiki/Serial_Peripheral_Interface_Bus]]
 - HTTP home weather server
 - Automated pet food bowl
 - Dedicated display for email notifications
+- Something with `gokrazy`
 
 Others?
