@@ -77,7 +77,7 @@ Note: These instructions are Linux-specific. Raspbian ([[http://raspbian.org]]) 
 
 - Bootstrapping compiler means Go can build itself for any available target
 - Use `GOOS` and `GOARCH` environment variables to control build target
-- For ARM devices, set `GOARM` environment variable for appropriate ARM version
+- For ARM devices, set `GOARM` environment variable for appropriate ARM version (note: ARMv8 devices use `GOARCH=arm64` with no associated `GOARM` value)
 
   $ GOOS=linux GOARCH=arm GOARM=7 go build github.com/my/project/cmd/foo
 
@@ -106,11 +106,34 @@ Note: Raspberry Pi 3 has ARMv8 processor, but 32-bit OSes will report it as ARMv
 - Multiple options exist for doing GPIO in Go
 - RPi specific: `github.com/stianeikeland/go-rpio`
 - Generic (Beaglebone, RPi, etc.): `github.com/kidoman/embd` and `github.com/mrmorphic/hwio`
-- Using `go-rpio` here
+- Using `embd` here
 
 * Example: Toggling LEDs
 
-- Components: External power supply, LEDs, resistors, transistors
+  func main() {
+  	// ...
+
+  	pin, errPin := embd.NewDigitalPin("P1_7")
+  	if errPin != nil {
+  		log.Fatal(errPin)
+  	}
+  	defer pin.Close()
+
+  	// ..	
+
+  	for {
+  		errWrite := pin.Write(embd.Low)
+  		if errWrite != nil {
+  			log.Fatal(errWrite)
+  			
+  		time.Sleep(1 * time.Second	
+  		errWrite = pin.Write(embd.High)
+  		if errWrite != nil {
+  			log.Fatal(errWrite)
+  			
+  		time.Sleep(1 * time.Second)
+  	}
+  }
 
 * Things to keep in mind
 
