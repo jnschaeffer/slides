@@ -1,3 +1,3 @@
-slides - It's Just Slides
+# slides - slides for presentations
 
-Really.
+This is a repository containing slides for presentations.
